@@ -11,39 +11,9 @@ jobs:
     uses: ./.github/workflows/_tests.yaml
     permissions:
       contents: read
-      issues: write
-      security-events: write
-
-  build-push-helm-chart:
-    runs-on: ubuntu-24.04
-
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Configure Git
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-
-      - name: Run chart-releaser
-        uses: helm/chart-releaser-action@cae68fefc6b5f367a0275617c9f83181ba54714f # v1.7.0
-        env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-        with:
-          charts_dir: ./charts
-          mark_as_latest: true
-          pages_branch: gh-pages
 
   helm-chart-testing:
     runs-on: ubuntu-24.04
-
-    needs:
-      - build-push-helm-chart
 
     permissions:
       contents: read
@@ -67,4 +37,4 @@ jobs:
       - name: Install helm chart
         run: |
           helm repo add wiki https://kubemite.github.io/wiki-helm/
-          helm install wiki wiki/wiki --version helm:0.0.0-${{ github.event.pull_request.head.sha }} --set image.tag=sha-${{ github.event.pull_request.head.sha }} --wait
+          helm install wiki ./charts/wiki --wait
