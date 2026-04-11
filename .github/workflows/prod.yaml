@@ -10,9 +10,10 @@ jobs:
   build-push-helm-chart:
     runs-on: ubuntu-24.04
     permissions:
-      contents: read
+      contents: write
       packages: write
       pages: write
+
 
     steps:
       - name: Checkout Repo
