@@ -36,5 +36,4 @@ jobs:
 
       - name: Install helm chart
         run: |
-          helm repo add wiki https://kubemite.github.io/wiki-helm/
           helm install wiki ./charts/wiki --wait
