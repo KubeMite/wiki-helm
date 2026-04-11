@@ -1,0 +1,81 @@
+{{- if .Values.networkPolicy.create }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "wiki-helm.fullname" . }}-ingress
+  labels:
+    {{- include "wiki-helm.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "wiki-helm.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
+        podSelector:
+          matchLabels:
+          {{- if .Values.networkPolicy.cloudflarePodLabel }}
+            {{- toYaml .Values.networkPolicy.cloudflarePodLabel | nindent 12 }}
+          {{- else }}
+            {}
+          {{- end }}
+      ports:
+        - port: 80
+          protocol: TCP
+{{- end }}
+---
+{{- if .Values.networkPolicy.create }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "wiki-helm.fullname" . }}-egress
+  labels:
+    {{- include "wiki-helm.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+    {{- if .Values.networkPolicy.cloudflarePodLabel }}
+      {{- toYaml .Values.networkPolicy.cloudflarePodLabel | nindent 6 }}
+    {{- else }}
+      {}
+    {{- end }}
+  policyTypes:
+    - Egress
+  egress:
+    # Access to wiki pods
+    - to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
+        podSelector:
+          matchLabels:
+            {{- include "wiki-helm.selectorLabels" . | nindent 12 }}
+      ports:
+        - port: 80
+          protocol: TCP
+    # Access to kubernetes DNS
+    - to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    # Access to internet
+    - to:
+      - ipBlock:
+          cidr: 0.0.0.0/0
+          except:
+            - 10.0.0.0/8
+            - 192.168.0.0/16
+            - 172.16.0.0/20
+{{- end }}
