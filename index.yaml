@@ -2,6 +2,17 @@ apiVersion: v1
 entries:
   wiki-helm:
   - apiVersion: v2
+    appVersion: v1.15.2
+    created: "2026-07-03T15:00:27.486798272Z"
+    description: A Helm chart for deploying the wiki website of Yahav Deutsch
+    digest: 59b0b9b0fe6ba488c0ec74f66cc94520ed5bfe688ec9834950427fb834715bf2
+    kubeVersion: '>=1.35.0-0'
+    name: wiki-helm
+    type: application
+    urls:
+    - https://KubeMite.github.io/wiki-helm/wiki-helm-v1.19.0.tgz
+    version: v1.19.0
+  - apiVersion: v2
     appVersion: v1.15.1
     created: "2026-07-03T14:54:03.262457788Z"
     description: A Helm chart for deploying the wiki website of Yahav Deutsch
@@ -221,4 +232,4 @@ entries:
     urls:
     - https://KubeMite.github.io/wiki-helm/wiki-helm-v0.1.0.tgz
     version: v0.1.0
-generated: "2026-07-03T14:54:03.261873434Z"
+generated: "2026-07-03T15:00:27.486195095Z"
